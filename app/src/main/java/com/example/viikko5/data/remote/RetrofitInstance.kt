@@ -8,12 +8,7 @@ import retrofit2.http.GET
 import java.util.concurrent.TimeUnit
 import kotlin.getValue
 
-data class Weather(
-    val main: String,
-    val description: String,
-    val icon: String,
-    val temp: Int
-)
+
 
 data class ApiResponse<T>(
     val success: Boolean,

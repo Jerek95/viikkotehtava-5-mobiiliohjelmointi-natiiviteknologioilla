@@ -1,4 +1,6 @@
 import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
+import java.util.Properties
+import java.io.FileInputStream
 
 val apiKey: String = gradleLocalProperties(rootDir, providers).getProperty("api_key")
 
@@ -22,7 +24,14 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        buildConfigField("String", "api_key", apiKey)
+
+        val properties = Properties()
+        val localPropertiesFile = rootProject.file("local.properties")
+        if (localPropertiesFile.exists()) {
+            properties.load(FileInputStream(localPropertiesFile))
+        }
+        val apiKey = properties.getProperty("api_key") ?: ""
+        buildConfigField("String", "api_key", "\"$apiKey\"")
     }
 
     buildTypes {
@@ -43,6 +52,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
@@ -54,6 +64,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
     implementation("com.squareup.okhttp3:okhttp:4.11.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
+    implementation(libs.androidx.material3)
     //implementation(libs.androidx.material3)
     val composeBom = platform("androidx.compose:compose-bom:2024.10.01")
     implementation(composeBom)
