@@ -3,14 +3,19 @@ package com.example.viikko5.ViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.viikko5.data.model.Weather
+import com.example.viikko5.data.model.WeatherResponse
 import com.example.viikko5.data.remote.RetrofitClient
+import com.example.viikko5.data.repository.WeatherRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 
-class WeatherViewModel : ViewModel(){
+class WeatherViewModel(private val repository: WeatherRepository = WeatherRepository()) : ViewModel(){
+
+    private val _uiState = MutableStateFlow<Result<WeatherResponse>>(Result.Loading)
+    val uiState: StateFlow<Result<WeatherResponse>> = _uiState.asStateFlow()
     private val _selectedCity = MutableStateFlow<String?>("")
     val selectedCity: StateFlow<String?> = _selectedCity
 
@@ -27,8 +32,15 @@ class WeatherViewModel : ViewModel(){
         _selectedCity.value = city
     }
 
-    fun getWeather(city: String){
+    fun getWeather(){
+        val city = _selectedCity.value
+        if (city!!.isBlank()) return
 
+
+        viewModelScope.launch {
+            _uiState.value = Result.Loading
+            _uiState.value = repository.getWeather(city)
+        }
     }
 
     fun loadWeather() {

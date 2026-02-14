@@ -16,13 +16,9 @@ data class ApiResponse<T>(
     val message: String?
 )
 
-interface ApiService {
-    @GET("weather")
-    suspend fun getWeather(): List<Weather>
-}
 
 object RetrofitClient {
-    private const val BASE_URL = "https://api.openweathermap.org/data/2.5/weather?"
+    private const val BASE_URL = "https://api.openweathermap.org/data/2.5/"
 
     private val okHttpClient = OkHttpClient.Builder()
         .addInterceptor(HttpLoggingInterceptor().apply {
@@ -32,12 +28,12 @@ object RetrofitClient {
         .readTimeout(30, TimeUnit.SECONDS)
         .build()
 
-    val apiService: ApiService by lazy {
+    val apiService: WeatherApiService by lazy {
         Retrofit.Builder()
             .baseUrl(BASE_URL)
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-            .create(ApiService::class.java)
+            .create(WeatherApiService::class.java)
     }
 }

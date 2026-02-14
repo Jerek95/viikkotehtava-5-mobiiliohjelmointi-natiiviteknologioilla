@@ -1,5 +1,6 @@
 package com.example.viikko5
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -15,13 +16,13 @@ import com.example.viikko5.ui.theme.Viikko5Theme
 import com.example.viikko5.view.WeatherScreen
 
 class MainActivity : ComponentActivity() {
+    @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val api_key = BuildConfig.api_key
         enableEdgeToEdge()
         setContent {
             Viikko5Theme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                Scaffold(modifier = Modifier.fillMaxSize()) {
                     WeatherScreen()
                 }
             }
