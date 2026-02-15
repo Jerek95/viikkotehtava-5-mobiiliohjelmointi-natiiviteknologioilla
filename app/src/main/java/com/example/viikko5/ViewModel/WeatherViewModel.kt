@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.viikko5.data.model.Weather
 import com.example.viikko5.data.model.WeatherResponse
-import com.example.viikko5.data.remote.RetrofitClient
 import com.example.viikko5.data.repository.WeatherRepository
+import com.example.viikko5.util.Result
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -28,8 +28,9 @@ class WeatherViewModel(private val repository: WeatherRepository = WeatherReposi
     private val _weatherInfo = MutableStateFlow<List<Weather>>(emptyList())
     val weatherInfo: StateFlow<List<Weather>> = _weatherInfo.asStateFlow()
 
-    fun selectCity(city: String){
+    fun selectCity(city: String) : String?{
         _selectedCity.value = city
+        return _selectedCity.value
     }
 
     fun getWeather(){
@@ -43,19 +44,4 @@ class WeatherViewModel(private val repository: WeatherRepository = WeatherReposi
         }
     }
 
-    fun loadWeather() {
-        viewModelScope.launch {
-            _isLoading.value = true
-            _error.value = null
-
-            try {
-                val userList = RetrofitClient.apiService.getWeather()
-                _weatherInfo.value = userList
-            } catch (e: Exception) {
-                _error.value = "Virhe ladattaessa käyttäjiä: ${e.message}"
-            } finally {
-                _isLoading.value = false
-            }
-        }
-    }
 }
